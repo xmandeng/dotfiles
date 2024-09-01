@@ -1,0 +1,76 @@
+# ~/.config/starship.toml
+
+format = """
+$python\
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$fill\
+$git_metrics\
+$line_break\
+$character
+"""
+
+add_newline = false
+command_timeout = 2000
+
+[fill]
+symbol = " "
+
+[status]
+disabled = false
+
+[username]
+style_user = 'green bold'
+style_root = 'red bold'
+format = '[$user@]($style)'
+disabled = false
+show_always = true
+
+[hostname]
+ssh_only = false
+format = '[$hostname:](green bold) '
+trim_at = '.'
+disabled = false
+
+[directory]
+truncation_length = 4
+truncate_to_repo = true
+format = "[$path]($style)[$read_only]($read_only_style) "
+before_repo_root_style = ""
+repo_root_style = "bold cyan"
+# 
+repo_root_format ="[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
+
+[git_branch]
+symbol = " "
+format = "[$symbol$branch(:$remote_branch)]($style)"
+style = "bold yellow"
+
+[git_status]
+format = "( [$ahead_behind$conflicted$deleted$renamed$untracked$modified$staged$typechanged]($style) )"
+style = "red bold dimmed"
+conflicted = "󰤼 "
+ahead = "\uf062 "
+behind = "\uf063 "
+diverged = "\uf0ec "
+modified = "\uf071 "
+untracked = "\uf059 "
+staged = "\uf067 "
+renamed = "\uf054 "
+deleted = "\uf00d "
+typechanged = "󱞫 "
+
+[git_metrics]
+added_style = "dimmed blue bold"
+deleted_style = "dimmed red bold"
+disabled = false
+
+[python]
+pyenv_version_name = true
+pyenv_prefix = ""
+style = "purple bold"
+format = '[$symbol$version:]($style) '
+symbol = " "

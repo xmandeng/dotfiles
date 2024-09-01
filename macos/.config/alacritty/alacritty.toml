@@ -1,0 +1,15 @@
+[env]
+# TERM = "xterm-256-color"
+
+[window]
+padding.x = 10
+padding.y = 10
+
+decorations = "Buttonless"
+
+opacity = 0.9
+blur = true
+
+[font]
+normal.family = "FiraCode Nerd Font Mono"
+size = 14.0

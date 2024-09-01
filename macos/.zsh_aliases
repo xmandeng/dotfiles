@@ -1,0 +1,28 @@
+# Shell
+alias ls='ls --color=auto'
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias c="clear"
+
+# grep w/ PCRE search ("-P")
+# alias grep="/usr/bin/grep --color=auto"
+# alias fgrep='/usr/bin/fgrep --color=auto'
+# alias egrep='/usr/bin/egrep --color=auto'
+
+# Git add incl dotfiles
+alias ga="git add . -A"
+alias gs="git status"
+alias gc="git commit -m"
+alias gp="git push"
+alias gco="git branch | fzf --cycle --no-info --border=rounded --reverse | xargs git checkout"
+alias gcd="git checkout develop"
+alias gl="git log --oneline --graph --all --decorate"
+alias gstat="git diff --stat"
+
+# TMUX
+alias t="tmux"
+alias ta="tmux a -t"
+alias tls="tmux ls"
+alias tn="tmux new -t"
+alias tkill="tmux kill-server"
