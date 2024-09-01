@@ -1,0 +1,113 @@
+# Local Installation script:
+# curl -sS https://starship.rs/install.sh | sed 's|/usr/local/bin|${HOME}/.local/bin|g' | sh
+
+# Github        https://github.com/starship/starship
+# Guide         https://starship.rs/config/
+
+# Overview      https://www.youtube.com/watch?v=G7aWxK4395Y
+# Community     https://github.com/starship/starship/discussions/1252
+
+# TOML Schema   https://starship.rs/config-schema.json
+
+# Block Fills " ░▒▓"
+
+format = """
+$custom\
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$git_metrics\
+$line_break\
+$character
+"""
+
+add_newline = true
+command_timeout = 2000
+palette = "vscode_dark_modern"
+
+[fill]
+symbol = " "
+
+[custom.guix]
+symbol = " "
+command = "echo $symbol"
+when = "test -n \"$GUIX_ENVIRONMENT\""
+style = "bold purple"
+
+[custom.noguix]
+symbol = "  "
+command = "echo $symbol"
+when = "test -z \"$GUIX_ENVIRONMENT\""
+
+[status]
+disabled = false
+
+[username]
+style_user = 'green bold'
+style_root = 'red bold'
+format = '[$user]($style)'
+disabled = false
+show_always = true
+
+[hostname]
+ssh_only = false
+format = '[@$hostname](bold green) '
+trim_at = '.'
+disabled = false
+
+[directory]
+style = "cyan"
+read_only = "  "
+read_only_style = "dimmed red"
+truncation_length = 3
+truncate_to_repo = true
+format = "[$path]($style)[$read_only]($read_only_style) "
+before_repo_root_style = ""
+repo_root_style = "cyan"
+repo_root_format ="[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
+
+[git_branch]
+symbol = " "
+format = "[$symbol$branch(:$remote_branch)]($style)"
+style = "yellow"
+
+[git_status]
+format = " [$ahead_behind$conflicted$deleted$renamed$untracked$modified$staged$typechanged]($style) "
+style = "red bold dimmed"
+conflicted = "󰤼 "
+ahead = " "
+behind = " "
+diverged = " "
+modified = " "
+untracked = "  "
+staged = " "
+renamed = " "
+deleted = " "
+typechanged = "󱞫 "
+
+[git_metrics]
+added_style = "dimmed light_blue bold"
+deleted_style = "dimmed red bold"
+disabled = false
+
+[character]
+format = "\\$ "
+
+[palettes.vscode_dark_modern]
+dark_gray = "#1E1E1E"   # Background
+light_gray = "#D4D4D4"  # Foreground
+# green = "#6A9955"     # Comments
+blue = "#569CD6"        # Keywords
+orange = "#CE9178"      # Strings
+light_green = "#B5CEA8" # Numbers
+# yellow = "#DCDCAA"    # Functions
+# cyan = "#4FC1FF"      # Constants
+light_blue = "#9CDCFE"  # Variables
+turquoise = "#4EC9B0"   # Classes_and_Types
+red = "#F44747"         # Error text
+# #D4D4D4 (same as default text but often bolded) # Operators:
+# #D4D4D4 (same as default text but often less prominent) # Punctuation:
+
+cyan = "#9CDCFE"

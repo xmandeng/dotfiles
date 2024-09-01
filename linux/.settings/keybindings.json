@@ -1,0 +1,12 @@
+[
+    {
+        "key": "ctrl+alt+b",
+        "command": "workbench.action.toggleSidebarVisibility",
+        "when": "terminalFocus || editorFocus || sideBarFocus || panelFocus || viewContainerFocus || notebookEditorFocused"
+    },
+    {
+        "key": "ctrl+alt+n",
+        "command": "workbench.action.toggleActivityBarVisibility",
+        "when": "terminalFocus || editorFocus || sideBarFocus || panelFocus || viewContainerFocus || notebookEditorFocused"
+    }
+]
