@@ -27,6 +27,11 @@ if [ -f $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.z
     source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
+# NPM
+export PATH="/usr/local/bin/node:$PATH"
+export PATH="$HOME/.npm-packages/bin:$PATH"
+export NVM_DIR="$HOME/.nvm"
+
 # Enable Zsh completions
 autoload -Uz compinit
 compinit
@@ -42,6 +47,8 @@ if command -v pyenv 1>/dev/null 2>&1; then
     eval "$(pyenv virtualenv-init -)"
 fi
 export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+
+export POETRY_VIRTUALENVS_PROMPT=" "
 
 # GNU grep
 if [ -d "$(brew --prefix grep)/libexec/gnubin" ]; then
@@ -59,7 +66,7 @@ fi
 
 # Use Starship with specific terminals
 case "$TERM_PROGRAM$TERM" in
-    vscode*|alacritty*|screen-256color*)
+    vscode*|alacritty*|screen-256color*|tmux*)
         if command -v starship 1>/dev/null 2>&1; then
             eval "$(starship init zsh)"
         fi
