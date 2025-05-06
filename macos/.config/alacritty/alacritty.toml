@@ -13,3 +13,8 @@ blur = true
 [font]
 normal.family = "FiraCode Nerd Font Mono"
 size = 14.0
+
+[mouse]
+bindings = [
+    { mouse = "Right", action = "Paste" }
+]
