@@ -1,0 +1,49 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python Debugger: Current File w/ Args",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "args": "${command:pickArgs}",
+      "env": {
+        "OUTPUT_PATH": "output/data.txt"
+      }
+    },
+    {
+      "name": "Day 5: Singley Linked List",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "hackerrank/prep_course_1_week/day5/singley_linked_list.py",
+      "console": "integratedTerminal",
+      "args": ["<", "input/singley_linked_list.txt"],
+      "env": {
+        "OUTPUT_PATH": "output/singley_linked_list.txt"
+      }
+    },
+    {
+      "name": "Day 5: Queue using stack",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "hackerrank/prep_course_1_week/day5/queue_using_stacks.py",
+      "console": "integratedTerminal",
+      "args": ["<", "input/queue_using_stacks.txt"],
+      "env": {
+        "OUTPUT_PATH": "output/queue_using_stacks.txt"
+      }
+    },
+    {
+      "name": "Day 6: Text Editor",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "hackerrank/prep_course_1_week/day6/text_editor.py",
+      "console": "integratedTerminal",
+      "args": ["<", "input/text_editor.txt"],
+      "env": {
+        "OUTPUT_PATH": "output/text_editor.txt"
+      }
+    }
+  ]
+}

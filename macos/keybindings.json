@@ -1,0 +1,12 @@
+// [
+//     {
+//         "key": "cmd+alt+b",
+//         "command": "workbench.view.explorer",
+//         "when": "terminalFocus || editorFocus || sideBarFocus || panelFocus || viewContainerFocus || notebookEditorFocused"
+//     },
+//     {
+//         "key": "cmd+alt+n",
+//         "command": "workbench.action.toggleActivityBarVisibility",
+//         "when": "terminalFocus || editorFocus || sideBarFocus || panelFocus || viewContainerFocus || notebookEditorFocused"
+//     }
+// ]
