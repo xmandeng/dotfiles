@@ -14,6 +14,10 @@ setopt hist_verify
 bindkey "^[[A" history-search-backward
 bindkey "^[[B" history-search-forward
 
+# TODO Re-test these ...
+bindkey "^[[1;5D" backward-word
+bindkey "^[[1;5C" forward-word
+
 # Aliases
 alias ll='ls -alF'
 alias la='ls -A'

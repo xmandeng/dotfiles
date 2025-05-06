@@ -1,12 +1,100 @@
-// [
-//     {
-//         "key": "cmd+alt+b",
-//         "command": "workbench.view.explorer",
-//         "when": "terminalFocus || editorFocus || sideBarFocus || panelFocus || viewContainerFocus || notebookEditorFocused"
-//     },
-//     {
-//         "key": "cmd+alt+n",
-//         "command": "workbench.action.toggleActivityBarVisibility",
-//         "when": "terminalFocus || editorFocus || sideBarFocus || panelFocus || viewContainerFocus || notebookEditorFocused"
-//     }
-// ]
+// Place your key bindings in this file to override the defaults
+[
+  {
+    "key": "cmd+ctrl+b",
+    "command": "workbench.action.toggleSidebarVisibility",
+    "when": "terminalFocus || editorFocus || sideBarFocus || panelFocus || viewContainerFocus || notebookEditorFocused"
+  },
+  {
+    "key": "cmd+ctrl+n",
+    "command": "workbench.action.toggleActivityBarVisibility",
+    "when": "terminalFocus || editorFocus || sideBarFocus || panelFocus || viewContainerFocus || notebookEditorFocused"
+  },
+  {
+    "key": "home",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": { "text": "\u001b[1~" },
+    "when": "terminalFocus"
+  },
+  {
+    "key": "end",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": { "text": "\u001b[4~" },
+    "when": "terminalFocus"
+  },
+  {
+    "key": "shift+home",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": { "text": "\u001b[1;2H" },
+    "when": "terminalFocus"
+  },
+  {
+    "key": "shift+end",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": { "text": "\u001b[1;2F" },
+    "when": "terminalFocus"
+  },
+  {
+    "key": "ctrl+home",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": { "text": "\u001b[1;5H" },
+    "when": "terminalFocus"
+  },
+  {
+    "key": "ctrl+end",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": { "text": "\u001b[1;5F" },
+    "when": "terminalFocus"
+  },
+  {
+    "key": "shift+ctrl+home",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": { "text": "\u001b[1;6H" },
+    "when": "terminalFocus"
+  },
+  {
+    "key": "shift+ctrl+end",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": { "text": "\u001b[1;6F" },
+    "when": "terminalFocus"
+  },
+  {
+    "key": "ctrl+right",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": { "text": "\u001b[1;5C" },
+    "when": "terminalFocus"
+  },
+  {
+    "key": "ctrl+left",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": { "text": "\u001b[1;5D" },
+    "when": "terminalFocus"
+  },
+  {
+    "key": "shift+ctrl+right",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": { "text": "\u001b[1;6C" },
+    "when": "terminalFocus"
+  },
+  {
+    "key": "shift+ctrl+left",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": { "text": "\u001b[1;6D" },
+    "when": "terminalFocus"
+  },
+  {
+    "key": "ctrl+right",
+    "command": "cursorWordRight",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "home",
+    "command": "cursorHome",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "end",
+    "command": "cursorEnd",
+    "when": "editorTextFocus"
+  }
+]
