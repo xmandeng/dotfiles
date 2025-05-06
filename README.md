@@ -87,8 +87,7 @@ brew install zsh-autosuggestions zsh-syntax-highlighting fzf ripgrep zoxide
 
 2. Install FiraCode Nerd Font:
 ```bash
-brew tap homebrew/cask-fonts
-brew install --cask font-fira-code-nerd-font
+brew install --cask font-fira-code
 ```
 
 ### For Linux Users
