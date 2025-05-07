@@ -4,12 +4,12 @@ TERM = "tmux-256color"
 [[keyboard.bindings]]
 key = "Left"
 mods = "Control"
-chars = "\u0001\u0001"  # Double Ctrl+A to bypass the prefix issue
+chars = "\u001bb"  # Alt+b for backward-word
 
 [[keyboard.bindings]]
 key = "Right"
 mods = "Control"
-chars = "\u0005"  # Ctrl+E → end of line
+chars = "\u001bf"  # Alt+f for forward-word
 
 [[keyboard.bindings]]
 key = "Up"
@@ -24,12 +24,12 @@ chars = "\u001b[1;5B"
 [[keyboard.bindings]]
 key = "Left"
 mods = "Command"
-chars = "\u001bb"
+chars = "\u0001\u0001"  # Ctrl+A for beginning of line
 
 [[keyboard.bindings]]
 key = "Right"
 mods = "Command"
-chars = "\u001bf"
+chars = "\u0005"  # Ctrl+E for end of line
 
 [window]
 padding.x = 10
