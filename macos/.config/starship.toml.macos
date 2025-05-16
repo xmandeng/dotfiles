@@ -1,5 +1,4 @@
 format = """
-[░▒▓](dimmed s#a3aed2)\
 [  ](bg:#a3aed2 fg:#090c0c)\
 [](bg:#769ff0 fg:#a3aed2)\
 $directory\
@@ -25,14 +24,14 @@ truncation_length = 3
 truncation_symbol = ""
 
 [directory.substitutions]
-"Documents" = "󰈙 "
-"Downloads" = " "
-"Music" = " "
-"Pictures" = " "
+"Documents" = " 󰈙 "
+"Downloads" = "   "
+"Music" = "   "
+"Pictures" = "   "
 
 [python]
-pyenv_version_name = true
-symbol = ""
+pyenv_version_name = false
+symbol = ""
 style = "bg:#394260"
 format = '[[ $symbol ($version) ](fg:#769ff0 bg:#394260)]($style)'
 
