@@ -1,6 +1,5 @@
 format = """
-[░▒▓](dimmed s#a3aed2)\
-[  ](bg:#a3aed2 fg:#090c0c)\
+$os\
 [](bg:#769ff0 fg:#a3aed2)\
 $directory\
 [](fg:#769ff0 bg:#394260)\
@@ -18,6 +17,19 @@ $time\
 [ ](fg:#1d2230)\
 \n$character"""
 
+[os]
+style = "bg:#a3aed2 fg:#090c0c"
+disabled = false
+
+[os.symbols]
+Windows = "  " 
+Macos = "  "
+Linux = "  "
+Arch = "  "
+Debian = "  "
+Ubuntu = "  "
+Android = "  "
+
 [directory]
 style = "fg:#e3e5e5 bg:#769ff0"
 format = "[ $path ]($style)"
@@ -25,14 +37,14 @@ truncation_length = 3
 truncation_symbol = ""
 
 [directory.substitutions]
-"Documents" = "󰈙 "
-"Downloads" = " "
-"Music" = " "
-"Pictures" = " "
+"Documents" = " 󰈙 "
+"Downloads" = "   "
+"Music" = "   "
+"Pictures" = "   "
 
 [python]
-pyenv_version_name = true
-symbol = ""
+pyenv_version_name = false
+symbol = ""
 style = "bg:#394260"
 format = '[[ $symbol ($version) ](fg:#769ff0 bg:#394260)]($style)'
 
@@ -78,4 +90,3 @@ format = '[[  $time ](fg:#a0a9cb bg:#1d2230)]($style)'
 
 [character]
 success_symbol ="[❯](bold fg:#a3aed2)"
-
