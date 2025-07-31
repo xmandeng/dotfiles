@@ -1,113 +1,95 @@
-# Local Installation script:
-# curl -sS https://starship.rs/install.sh | sed 's|/usr/local/bin|${HOME}/.local/bin|g' | sh
-
-# Github        https://github.com/starship/starship
-# Guide         https://starship.rs/config/
-
-# Overview      https://www.youtube.com/watch?v=G7aWxK4395Y
-# Community     https://github.com/starship/starship/discussions/1252
-
-# TOML Schema   https://starship.rs/config-schema.json
-
-# Block Fills " ░▒▓"
-
 format = """
-$custom\
-$username\
-$hostname\
+$os\
+[](bg:#769ff0 fg:#a3aed2)\
 $directory\
+[](fg:#769ff0 bg:#394260)\
+$python\
+$nodejs\
+$rust\
+$golang\
+$php\
+[](fg:#394260 bg:#212736)\
 $git_branch\
 $git_status\
-$git_metrics\
-$line_break\
-$character
-"""
+[$git_metrics](bg:#212736)\
+[](fg:#212736 bg:#1d2230)\
+$time\
+[ ](fg:#1d2230)\
+\n$character"""
 
-add_newline = true
-command_timeout = 2000
-palette = "vscode_dark_modern"
-
-[fill]
-symbol = " "
-
-[custom.guix]
-symbol = " "
-command = "echo $symbol"
-when = "test -n \"$GUIX_ENVIRONMENT\""
-style = "bold purple"
-
-[custom.noguix]
-symbol = "  "
-command = "echo $symbol"
-when = "test -z \"$GUIX_ENVIRONMENT\""
-
-[status]
+[os]
+style = "bg:#a3aed2 fg:#3c4556"
+# style = "bg:#a3aed2 fg:#090c0c"
 disabled = false
 
-[username]
-style_user = 'green bold'
-style_root = 'red bold'
-format = '[$user]($style)'
-disabled = false
-show_always = true
-
-[hostname]
-ssh_only = false
-format = '[@$hostname](bold green) '
-trim_at = '.'
-disabled = false
+[os.symbols]
+Windows = "  "
+Macos = "  "
+Linux = "  "
+Arch = "  "
+Debian = "  "
+Ubuntu = "  "
+Android = "  "
 
 [directory]
-style = "cyan"
-read_only = "  "
-read_only_style = "dimmed red"
+style = "fg:#e3e5e5 bg:#769ff0"
+format = "[ $path ]($style)"
 truncation_length = 3
-truncate_to_repo = true
-format = "[$path]($style)[$read_only]($read_only_style) "
-before_repo_root_style = ""
-repo_root_style = "cyan"
-repo_root_format ="[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
+truncation_symbol = ""
+
+[directory.substitutions]
+"Documents" = " 󰈙 "
+"Downloads" = "   "
+"documents" = " 󰈙 "
+"downloads" = "   "
+"Music" = "   "
+"Pictures" = "   "
+
+[python]
+pyenv_version_name = false
+symbol = ""
+style = "bg:#394260"
+format = '[[ $symbol ($virtualenv) ](fg:#769ff0 bg:#394260)]($style)'
+
+[nodejs]
+symbol = ""
+style = "bg:#394260"
+format = '[[ $symbol ($version) ](fg:#769ff0 bg:#394260)]($style)'
+
+[rust]
+symbol = ""
+style = "bg:#394260"
+format = '[[ $symbol ($version) ](fg:#769ff0 bg:#394260)]($style)'
+
+[golang]
+symbol = ""
+style = "bg:#394260"
+format = '[[ $symbol ($version) ](fg:#769ff0 bg:#394260)]($style)'
+
+[php]
+symbol = ""
+style = "bg:#394260"
+format = '[[ $symbol ($version) ](fg:#769ff0 bg:#394260)]($style)'
 
 [git_branch]
-symbol = " "
-format = "[$symbol$branch(:$remote_branch)]($style)"
-style = "yellow"
+symbol = ""
+style = "bg:#212736"
+format = '[[ $symbol $branch ](fg:#769ff0 bg:#212736)]($style)'
 
 [git_status]
-format = " [$ahead_behind$conflicted$deleted$renamed$untracked$modified$staged$typechanged]($style) "
-style = "red bold dimmed"
-conflicted = "󰤼 "
-ahead = " "
-behind = " "
-diverged = " "
-modified = " "
-untracked = "  "
-staged = " "
-renamed = " "
-deleted = " "
-typechanged = "󱞫 "
+style = "fg:red bg:#212736"
+format = '[[($all_status$ahead_behind )](fg:red bg:#212736)]($style)'
 
 [git_metrics]
-added_style = "dimmed light_blue bold"
-deleted_style = "dimmed red bold"
 disabled = false
+added_style = "green bg:#212736"
+deleted_style = "red bg:#212736"
+
+[time]
+disabled = false
+time_format = "%R" # Hour:Minute Format
+style = "bg:#1d2230"
+format = '[[  $time ](fg:#a0a9cb bg:#1d2230)]($style)'
 
 [character]
-format = "\\$ "
-
-[palettes.vscode_dark_modern]
-dark_gray = "#1E1E1E"   # Background
-light_gray = "#D4D4D4"  # Foreground
-# green = "#6A9955"     # Comments
-blue = "#569CD6"        # Keywords
-orange = "#CE9178"      # Strings
-light_green = "#B5CEA8" # Numbers
-# yellow = "#DCDCAA"    # Functions
-# cyan = "#4FC1FF"      # Constants
-light_blue = "#9CDCFE"  # Variables
-turquoise = "#4EC9B0"   # Classes_and_Types
-red = "#F44747"         # Error text
-# #D4D4D4 (same as default text but often bolded) # Operators:
-# #D4D4D4 (same as default text but often less prominent) # Punctuation:
-
-cyan = "#9CDCFE"
+success_symbol ="[❯](bold fg:#a3aed2)"
