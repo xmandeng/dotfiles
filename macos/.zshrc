@@ -63,9 +63,10 @@ fi
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
 
-# Set up Zoxide
+# Set up Zoxide (replaces cd)
 if command -v zoxide 1>/dev/null 2>&1; then
-    eval "$(zoxide init zsh)"
+    eval "$(zoxide init zsh --cmd cd)"
+    alias cdi='cd -i'
 fi
 
 # Use Starship with specific terminals

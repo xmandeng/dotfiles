@@ -15,6 +15,8 @@ alias egrep='/bin/egrep --color=auto'
 alias ga='git add . -A'
 alias gs='git status'
 alias gc='git commit -m'
+alias gp='git log -p'
+alias g1='git log --oneline'
 alias gpush='git push'
 alias gpull='git pull'
 alias gco="git branch -r | sed 's/^ *origin\///' | fzf --cycle --no-info --border=rounded --reverse | xargs git checkout"
