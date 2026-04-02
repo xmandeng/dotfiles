@@ -1,143 +1,228 @@
 # Dotfiles
 
-This repository contains my personal dotfiles for both Linux and macOS environments. The configuration files are organized by operating system and are managed using GNU Stow for easy deployment.
+Personal dotfiles for **Linux** (Bash) and **macOS** (Zsh), managed with [GNU Stow](https://www.gnu.org/software/stow/).
 
-## Overview
+## What's Included
 
-The repository is structured into two main directories:
-- `linux/` - Configuration files for Linux systems
-- `macos/` - Configuration files for macOS systems
+| Component | macOS | Linux | Notes |
+|---|---|---|---|
+| Shell config | `.zshrc`, `.zprofile`, `.zsh_aliases` | `.bashrc`, `.bash_aliases` | Zsh on macOS, Bash on Linux |
+| Starship prompt | `.config/starship.toml` | `.config/starship.toml` | Custom powerline-style prompt with git metrics |
+| tmux | `.tmux.conf` | `.tmux.conf` | Catppuccin Mocha theme, TPM plugins, `Ctrl+A` prefix |
+| Git | `.gitconfig` | `.gitconfig` | Delta side-by-side diffs, LFS support |
+| Alacritty | `.config/alacritty/alacritty.toml` | -- | Terminal with FiraCode Nerd Font |
+| VSCode | `vscode/macos/` | `vscode/linux/` | Reference files (not stowed -- copy manually) |
+| AWS CLI | -- | `.aws/config` | SSO profile template |
+| PostgreSQL | -- | `.pgpass`, `.pg_service.conf` | Connection credentials (auto-secured to 600) |
+| macOS key bindings | `DefaultKeyBinding.dict` | -- | Fix Home/End and Ctrl+Arrow keys (manual copy) |
 
-### Key Features
+## Dependencies
 
-- Shell configurations (Bash for Linux, Zsh for macOS)
-- Terminal multiplexer setup (tmux)
-- PostgreSQL configuration files
-- Starship prompt customization
-- Git aliases and configurations
-- AWS CLI configuration
-- VSCode settings
-- Alacritty terminal configuration (macOS)
+### Required (both platforms)
 
-## Prerequisites
+| Tool | Purpose |
+|---|---|
+| [Git](https://git-scm.com/) | Version control |
+| [GNU Stow](https://www.gnu.org/software/stow/) | Symlink manager for dotfiles |
+| [tmux](https://github.com/tmux/tmux) | Terminal multiplexer |
+| [Starship](https://starship.rs/) | Cross-shell prompt |
+| [fzf](https://github.com/junegunn/fzf) | Fuzzy finder (used in aliases and shell history) |
+| [ripgrep](https://github.com/BurntSushi/ripgrep) | Fast search (fzf file source via `rg`) |
+| [zoxide](https://github.com/ajeetdsouza/zoxide) | Smarter `cd` command |
+| [delta](https://github.com/dandavidsern/delta) | Git diff viewer (used by `.gitconfig`) |
+| [FiraCode Nerd Font](https://www.nerdfonts.com/) | Icons in Starship prompt and Alacritty |
 
-Before installing these dotfiles, ensure you have the following installed:
+### macOS only
 
-- GNU Stow
-- Git
-- tmux
-- Starship (for custom shell prompt)
-- Required fonts:
-  - FiraCode Nerd Font (for proper icon rendering)
+| Tool | Purpose |
+|---|---|
+| [Homebrew](https://brew.sh/) | Package manager (everything below is installed via `brew`) |
+| [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) | Fish-like autosuggestions for Zsh |
+| [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) | Syntax highlighting for Zsh |
+| [Alacritty](https://alacritty.org/) | GPU-accelerated terminal emulator |
+| [pyenv](https://github.com/pyenv/pyenv) + [pyenv-virtualenv](https://github.com/pyenv/pyenv-virtualenv) | Python version management |
+| [GNU grep](https://www.gnu.org/software/grep/) | Replaces BSD grep for PCRE support |
 
-### Installing Prerequisites
+<details>
+<summary>Full <code>brew leaves</code> list</summary>
 
-#### Linux (Debian/Ubuntu)
-```bash
-sudo apt update
-sudo apt install -y stow git tmux
-```
+btop, diff-so-fancy, entr, fzf, git, gprof2dot, grep, neovim, nmap, parallel,
+pyenv-virtualenv, ripgrep, sha3sum, starship, stow, tmux, tree, watch, yq,
+zoxide, zsh-autosuggestions, zsh-syntax-highlighting
+</details>
 
-#### macOS
-```bash
-brew install stow git tmux
-```
+### Linux only
 
-### Installing Starship
-```bash
-curl -sS https://starship.rs/install.sh | sh
-```
+| Tool | Purpose |
+|---|---|
+| [bat](https://github.com/sharkdp/bat) | Syntax-highlighted file preview (used in `open` alias) |
+| [Rust/Cargo](https://rustup.rs/) | Some CLI tools installed via Cargo |
 
 ## Installation
 
-1. Clone this repository to your home directory:
+### 1. Install dependencies
+
+#### macOS
+
 ```bash
-git clone https://github.com/yourusername/dotfiles.git ~/.dotfiles
+# Install Homebrew (if not already installed)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Core tools
+brew install git stow tmux starship fzf ripgrep zoxide delta
+
+# Shell plugins
+brew install zsh-autosuggestions zsh-syntax-highlighting
+
+# Optional but recommended
+brew install pyenv pyenv-virtualenv grep alacritty
+brew install btop entr neovim tree watch yq
+
+# Font
+brew install --cask font-fira-code-nerd-font
+```
+
+#### Linux (Debian/Ubuntu)
+
+```bash
+sudo apt update
+sudo apt install -y git stow tmux fzf bat
+
+# Install Starship
+curl -sS https://starship.rs/install.sh | sh
+
+# Install ripgrep, zoxide, delta (via package manager or cargo)
+sudo apt install -y ripgrep
+cargo install zoxide --locked
+cargo install git-delta --locked
+
+# Install FiraCode Nerd Font
+# Download from https://www.nerdfonts.com/font-downloads and place in ~/.local/share/fonts/
+```
+
+### 2. Clone the repo
+
+```bash
+git clone https://github.com/xaviermandeng/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 ```
 
-2. Use Stow to symlink the configurations:
+### 3. Stow the configs
 
-For Linux:
 ```bash
-cd ~/.dotfiles
+# macOS
+stow -t ~ macos
+
+# Linux
 stow -t ~ linux
 ```
 
-For macOS:
-```bash
-cd ~/.dotfiles
-stow -t ~ macos
-```
+### 4. Set up tmux plugins
 
-### Optional: Installing tmux Plugin Manager (tpm)
 ```bash
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 ```
-After installation, open tmux and press `prefix + I` to install plugins.
 
-## Post-Installation
+Then open tmux and press `Ctrl+A` then `I` (capital) to install all plugins.
 
-### For macOS Users
+### 5. Reload your shell
 
-1. Install Homebrew packages:
 ```bash
-brew install zsh-autosuggestions zsh-syntax-highlighting fzf ripgrep zoxide
+# macOS
+source ~/.zshrc
+
+# Linux
+source ~/.bashrc
 ```
 
-2. Install FiraCode Nerd Font:
+### 6. Manual steps (macOS)
+
+Copy the macOS key bindings file to fix Home/End keys system-wide:
+
 ```bash
-brew install --cask font-fira-code
+mkdir -p ~/Library/KeyBindings
+cp ~/.dotfiles/macos/DefaultKeyBinding.dict ~/Library/KeyBindings/
 ```
 
-### For Linux Users
+### 7. VSCode settings (optional)
 
-1. Set up PostgreSQL configuration:
+VSCode files are stored in `vscode/` as reference -- copy them to your VSCode config directory as needed:
+
 ```bash
-chmod 600 ~/.pgpass
-chmod 600 ~/.pg_service.conf
+# macOS
+cp ~/.dotfiles/vscode/macos/settings.json ~/Library/Application\ Support/Code/User/
+cp ~/.dotfiles/vscode/macos/keybindings.json ~/Library/Application\ Support/Code/User/
+
+# Linux (or use the Remote SSH path if applicable)
+cp ~/.dotfiles/vscode/linux/keybindings.json ~/.config/Code/User/
 ```
 
-## Additional Configuration
+## tmux Key Bindings
 
-### VSCode Setup
-- Copy the settings from `.settings/` to your VSCode settings
-- Install recommended extensions (list provided in vscode_dark_modern.json)
+The prefix key is remapped to `Ctrl+A` (instead of the default `Ctrl+B`).
 
-### AWS Configuration
-- Update `.aws/config` with your AWS credentials and regions
+| Binding | Action |
+|---|---|
+| `Prefix + \|` | Vertical split |
+| `Prefix + -` | Horizontal split |
+| `Prefix + r` | Reload tmux config |
+| `Prefix + I` | Install plugins (TPM) |
+| `Prefix + Tab` | Toggle file sidebar |
+| `Prefix + Ctrl+s` | Save session (resurrect) |
+| `Prefix + Ctrl+r` | Restore session (resurrect) |
+| `Prefix + Shift+Left/Right` | Move window left/right |
+| `Ctrl+P / Ctrl+N` | Previous / next command |
+| `Ctrl+Left/Right` | Jump word |
+| `Alt+Left/Right` | Jump to start/end of line |
+
+### tmux Plugins
+
+- **catppuccin/tmux** -- Mocha theme with rounded tabs
+- **tmux-sensible** -- Sensible defaults
+- **tmux-better-mouse-mode** -- Improved mouse support
+- **tmux-sidebar** -- File tree sidebar
+- **tmux-resurrect** -- Save/restore sessions across restarts
+- **tmux-continuum** -- Auto-save sessions
+
+## Shell Aliases (quick reference)
+
+### Git
+
+| Alias | Command |
+|---|---|
+| `ga` | `git add . -A` |
+| `gs` | `git status` |
+| `gc` | `git commit -m` |
+| `gp` / `gpush` | `git push` |
+| `gco` | Interactive branch checkout via fzf |
+| `gl` | `git log --oneline --graph --all --decorate` |
+| `gstat` | `git diff --stat` |
+
+### tmux
+
+| Alias | Command |
+|---|---|
+| `t` | `tmux` |
+| `ta` | `tmux a -t` (attach to session) |
+| `tls` | `tmux ls` |
+| `tn` | `tmux new -t` |
+| `tkill` | `tmux kill-server` |
 
 ## Updating
 
-To update your dotfiles:
-
-1. Pull the latest changes:
 ```bash
 cd ~/.dotfiles
 git pull
-```
-
-2. Restow the configurations:
-```bash
-stow -R -t ~ linux  # For Linux
-# OR
-stow -R -t ~ macos  # For macOS
+stow -R -t ~ macos   # or: stow -R -t ~ linux
 ```
 
 ## Uninstalling
 
-To remove the symlinks:
 ```bash
 cd ~/.dotfiles
-stow -D linux  # For Linux
-# OR
-stow -D macos  # For macOS
+stow -D macos   # or: stow -D linux
 ```
-
-## Contributing
-
-Feel free to fork this repository and customize it for your own use. If you have any improvements or suggestions, please open an issue or submit a pull request.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT -- see [LICENSE](LICENSE) for details.
