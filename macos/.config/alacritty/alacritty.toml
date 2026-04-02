@@ -33,9 +33,9 @@ chars = "\u0005"  # Ctrl+E for end of line
 
 [window]
 padding.x = 10
-padding.y = 10
+padding.y = 30
 
-decorations = "Buttonless"
+decorations = "Transparent"
 
 opacity = 0.9
 blur = true
