@@ -6,6 +6,8 @@ alias l='ls -CF'
 alias c='clear'
 alias s='source ~/.bashrc'
 alias python=python3
+alias a='source .venv/bin/activate'
+alias d='deactivate'
 
 alias grep='/bin/grep --color=auto'
 alias fgrep='/bin/fgrep --color=auto'
@@ -74,3 +76,6 @@ tmux_select_session() {
     fi
 }
 alias ts='tmux_select_session'
+
+# ── Machine-local overrides ─────────────────────────────────────────────────
+[ -f ~/.bash_aliases.local ] && . ~/.bash_aliases.local

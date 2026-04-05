@@ -51,6 +51,9 @@ export VISUAL="$EDITOR"
 export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
 export STARSHIP_CONFIG="$HOME/.config/starship.toml"
 
+# ── Machine-local overrides (secrets, keys, etc.) ───────────────────────────
+[ -f ~/.bashrc.local ] && . ~/.bashrc.local
+
 # ── Secure sensitive files ───────────────────────────────────────────────────
 [ -f "$HOME/.pgpass" ] && chmod 600 "$HOME/.pgpass"
 [ -f "$HOME/.pg_service.conf" ] && chmod 600 "$HOME/.pg_service.conf"
