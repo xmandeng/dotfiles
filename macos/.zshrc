@@ -18,11 +18,6 @@ bindkey "^[[B" history-search-forward
 bindkey "^[[1;5D" backward-word
 bindkey "^[[1;5C" forward-word
 
-# Aliases
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-
 # Setup autosuggestions and syntax highlighting
 if [ -f $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
     source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -66,7 +61,6 @@ export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
 # Set up Zoxide (replaces cd)
 if command -v zoxide 1>/dev/null 2>&1; then
     eval "$(zoxide init zsh --cmd cd)"
-    alias cdi='cd -i'
 fi
 
 # Use Starship with specific terminals
@@ -104,3 +98,6 @@ esac
 # zoxide
 # zsh-autosuggestions
 # zsh-syntax-highlighting
+
+# Local overrides (not tracked in dotfiles)
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local

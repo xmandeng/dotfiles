@@ -1,29 +1,58 @@
-# Shell
+# ── Core ─────────────────────────────────────────────────────────────────────
 alias ls='ls --color=auto'
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
-alias c="clear"
+alias c='clear'
+alias s='source ~/.zshrc'
+alias python=python3
+alias a='source .venv/bin/activate'
+alias d='deactivate'
 
-# grep w/ PCRE search ("-P")
-# alias grep="/usr/bin/grep --color=auto"
-# alias fgrep='/usr/bin/fgrep --color=auto'
-# alias egrep='/usr/bin/egrep --color=auto'
+# ── Git ──────────────────────────────────────────────────────────────────────
+alias ga='git add . -A'
+alias gs='git status'
+alias gc='git commit -m'
+alias gp='git log -p'
+alias g1='git log --oneline'
+alias gco="git branch -r | sed 's/^ *origin\///' | fzf --cycle --no-info --border=rounded --reverse | xargs git checkout"
+alias gcd='git checkout develop'
+alias gl='git log --oneline --graph --all --decorate --parents'
+alias gstat='git diff --stat'
+alias uncommit='git reset --soft HEAD~1'
+alias forget='git reset --hard HEAD~1'
+alias cleanup="git branch -vv | grep 'origin/.*: gone]' | awk '{print \$1}' | xargs git branch -D"
 
-# Git add incl dotfiles
-alias ga="git add . -A"
-alias gs="git status"
-alias gc="git commit -m"
-alias gp="git log -p"
-alias g1="git log --oneline"
-alias gco="git branch | fzf --cycle --no-info --border=rounded --reverse | xargs git checkout"
-alias gcd="git checkout develop"
-alias gl="git log --oneline --graph --all --decorate"
-alias gstat="git diff --stat"
+# ── Tmux ─────────────────────────────────────────────────────────────────────
+alias t='tmux'
+alias ta='tmux a -t'
+alias tls='tmux ls'
+alias tn='tmux new -t'
+alias tkill='tmux kill-server'
 
-# TMUX
-alias t="tmux"
-alias ta="tmux a -t"
-alias tls="tmux ls"
-alias tn="tmux new -t"
-alias tkill="tmux kill-server"
+tmux_select_session() {
+    local session
+    session=$(tmux list-sessions -F "#S" 2>/dev/null | fzf --height=40%)
+    if [ -n "$session" ]; then
+        tmux attach-session -t "$session"
+    else
+        echo "No session selected."
+    fi
+}
+alias ts='tmux_select_session'
+
+# ── Tools ────────────────────────────────────────────────────────────────────
+alias claudeyolo='claude --dangerously-skip-permissions'
+alias watch_status='while true; do clear; echo -e "\nGIT STATUS: \033[1;34m${PWD##*/}\033[0m"; echo ""; git status; sleep 5; done'
+
+# ── Functions ────────────────────────────────────────────────────────────────
+take() {
+    mkdir -p "$1" && cd "$1"
+}
+
+hist() {
+    local cmd
+    cmd=$(history | awk '{$1=""; print substr($0, 2)}' | grep -Pv '^hist(ory)?$' | uniq | tail -n 100 | fzf --tac --cycle)
+    [ -n "$cmd" ] && echo -e "\n${cmd}\n" && eval "$cmd"
+}
+
