@@ -63,3 +63,6 @@ export STARSHIP_CONFIG="$HOME/.config/starship.toml"
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 eval "$(starship init bash)"
 eval "$(zoxide init bash --cmd cd)"
+
+# Local overrides (not tracked in dotfiles)
+[ -f ~/.bashrc.local ] && source ~/.bashrc.local
