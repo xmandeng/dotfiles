@@ -10,6 +10,7 @@ INPUT=$(cat)
 PROJECT_DIR=$(echo "$INPUT" | jq -r '.workspace.project_dir // .cwd // ""')
 MODEL_DISPLAY=$(echo "$INPUT" | jq -r '.model.display_name // ""')
 CTX_USED=$(echo "$INPUT" | jq -r '.context_window.used_percentage // 0')
+SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // ""')
 
 # --- Derive project name from git remote or folder ---
 PROJECT=""
@@ -104,6 +105,7 @@ YELLOW='\033[33m'               # git_branch
 RED='\033[31m'                   # git_status
 GREEN='\033[32m'                 # git_metrics added
 GRAY='\033[38;2;160;169;203m'   # #a0a9cb — time/secondary text
+FADED='\033[2;38;2;110;115;135m' # dim + #6e7387 — barely-there text (session id)
 ITALIC='\033[3m'
 RESET='\033[0m'
 
@@ -146,6 +148,11 @@ fi
 # Model — only when NOT the default Opus (handles "Opus", "Opus 4.6", etc.)
 if [ -n "$MODEL_DISPLAY" ] && [[ "$MODEL_DISPLAY" != Opus* ]]; then
   OUT="${OUT}${SEP}${GRAY}${MODEL_DISPLAY}${RESET}"
+fi
+
+# Session id (full UUID, first line — can be copied to resume)
+if [ -n "$SESSION_ID" ]; then
+  echo -e "${FADED}${SESSION_ID}${RESET}"
 fi
 
 echo -e "$OUT"
