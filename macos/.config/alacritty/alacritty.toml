@@ -26,22 +26,19 @@ chars = "\u001b[1;5B"
 
 [[keyboard.bindings]]
 key = "Left"
-mods = "Command"
-chars = "\u0001\u0001"  # Ctrl+A for beginning of line
+mods = "Super"
+chars = "\u0001"  # Ctrl+A for beginning of line
 
 [[keyboard.bindings]]
 key = "Right"
-mods = "Command"
+mods = "Super"
 chars = "\u0005"  # Ctrl+E for end of line
 
 [window]
 padding.x = 10
 padding.y = 30
 
-decorations = "Transparent"
-
 opacity = 0.9
-blur = true
 
 [font]
 normal.family = "FiraCode Nerd Font Mono"

@@ -8,7 +8,7 @@ alias s='source ~/.bashrc'
 alias python=python3
 alias a='source .venv/bin/activate'
 alias d='deactivate'
-
+dotenv() { if [ -f .env ]; then ( set -a; . ./.env; set +a; "$@" ); else "$@"; fi; }
 alias grep='/bin/grep --color=auto'
 alias fgrep='/bin/fgrep --color=auto'
 alias egrep='/bin/egrep --color=auto'
@@ -36,6 +36,7 @@ alias tkill='tmux kill-server'
 
 # ── Tools ────────────────────────────────────────────────────────────────────
 alias claudeyolo='claude --dangerously-skip-permissions'
+alias agents="claude agents --dangerously-skip-permissions"
 alias watch_status='while true; do clear; echo -e "\nGIT STATUS: \033[1;34m${PWD##*/}\033[0m"; echo ""; git status; sleep 5; done'
 
 # ── Functions ────────────────────────────────────────────────────────────────
