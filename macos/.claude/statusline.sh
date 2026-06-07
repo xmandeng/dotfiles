@@ -8,7 +8,9 @@ INPUT=$(cat)
 
 # --- Extract fields ---
 PROJECT_DIR=$(echo "$INPUT" | jq -r '.workspace.project_dir // .cwd // ""')
-MODEL_DISPLAY=$(echo "$INPUT" | jq -r '.model.display_name // ""')
+# Strip " context" from the parenthetical size spec, e.g. "Opus 4.8 (1M context)" -> "Opus 4.8 (1M)".
+# Matches any size token (1M, 200K, ...) so it applies to every context-tagged model.
+MODEL_DISPLAY=$(echo "$INPUT" | jq -r '.model.display_name // ""' | sed 's/ context)/)/')
 CTX_USED=$(echo "$INPUT" | jq -r '.context_window.used_percentage // 0')
 SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // ""')
 
@@ -109,7 +111,7 @@ FADED='\033[2;38;2;110;115;135m' # dim + #6e7387 — barely-there text (session 
 ITALIC='\033[3m'
 RESET='\033[0m'
 
-SEP="  "
+SEP=" "
 
 # --- Build output ---
 OUT=""
@@ -123,7 +125,7 @@ fi
 if [ -n "$LOCATION" ]; then
   OUT="${OUT}${SEP}${YELLOW}\uf418 ${LOCATION}${RESET}"
   if [ -n "$GIT_STATUS" ]; then
-    OUT="${OUT}  ${RED}${GIT_STATUS}${RESET}"
+    OUT="${OUT} ${RED}${GIT_STATUS}${RESET}"
   fi
   if [ -n "$METRICS_ADDED" ]; then
     OUT="${OUT} ${GREEN}+${METRICS_ADDED}${RESET}"
@@ -145,14 +147,19 @@ if [ "$CTX_INT" -ge 60 ] 2>/dev/null; then
   OUT="${OUT}${SEP}${CTX_COLOR}ctx ${CTX_INT}%${RESET}"
 fi
 
-# Model — only when NOT the default Opus (handles "Opus", "Opus 4.6", etc.)
-if [ -n "$MODEL_DISPLAY" ] && [[ "$MODEL_DISPLAY" != Opus* ]]; then
-  OUT="${OUT}${SEP}${GRAY}${MODEL_DISPLAY}${RESET}"
+# Model + session id, appended after the git info on the same line.
+# Separator pipe uses the same muted gray as the model text.
+MODEL_INFO=""
+if [ -n "$MODEL_DISPLAY" ]; then
+  MODEL_INFO="${GRAY}${MODEL_DISPLAY}${RESET}"
 fi
-
-# Session id (full UUID, first line — can be copied to resume)
 if [ -n "$SESSION_ID" ]; then
-  echo -e "${FADED}${SESSION_ID}${RESET}"
+  [ -n "$MODEL_INFO" ] && MODEL_INFO="${MODEL_INFO}${SEP}${FADED}·${RESET}${SEP}" || true
+  MODEL_INFO="${MODEL_INFO}${FADED}${SESSION_ID}${RESET}"
+fi
+if [ -n "$MODEL_INFO" ]; then
+  [ -n "$OUT" ] && OUT="${OUT}${SEP}${FADED}·${RESET}${SEP}" || true
+  OUT="${OUT}${MODEL_INFO}"
 fi
 
 echo -e "$OUT"
