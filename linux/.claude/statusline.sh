@@ -64,7 +64,7 @@ if [ -d "$PROJECT_DIR/.git" ] || [ -f "$PROJECT_DIR/.git" ]; then
     BEHIND=$(echo "$AB" | awk '{print $2}')
   fi
 
-  # Stash count — macOS: pipe through xargs to strip leading whitespace from wc -l
+  # Stash count — pipe through xargs to strip leading whitespace from wc -l
   STASHED=$(git -C "$PROJECT_DIR" stash list 2>/dev/null | wc -l | xargs)
 
   # Build status string (matches starship git_status — symbols only, no counts)
@@ -87,7 +87,6 @@ if [ -d "$PROJECT_DIR/.git" ] || [ -f "$PROJECT_DIR/.git" ]; then
   fi
 
   # Git metrics (+added / -deleted lines)
-  # macOS grep does not support -P (PCRE); use -oE with a two-step pipe instead
   DIFF_STAT=$(git -C "$PROJECT_DIR" diff --shortstat HEAD 2>/dev/null || true)
   ADDED=$(echo "$DIFF_STAT" | grep -oE '[0-9]+ insertion' | grep -oE '[0-9]+' || true)
   REMOVED=$(echo "$DIFF_STAT" | grep -oE '[0-9]+ deletion' | grep -oE '[0-9]+' || true)
