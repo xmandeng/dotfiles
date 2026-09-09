@@ -12,7 +12,11 @@ PROJECT_DIR=$(echo "$INPUT" | jq -r '.workspace.project_dir // .cwd // ""')
 # Matches any size token (1M, 200K, ...) so it applies to every context-tagged model.
 MODEL_DISPLAY=$(echo "$INPUT" | jq -r '.model.display_name // ""' | sed 's/ context)/)/')
 CTX_USED=$(echo "$INPUT" | jq -r '.context_window.used_percentage // 0')
+# First 8 characters of the session id: enough for a prefix match, a third of the columns of the full id.
 SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // ""')
+SESSION_LABEL="${SESSION_ID:0:8}"
+# Absent when the model has no effort parameter; values are low, medium, high, xhigh, max.
+EFFORT=$(echo "$INPUT" | jq -r '.effort.level // ""')
 
 # --- Derive project name from git remote or folder ---
 PROJECT=""
@@ -106,60 +110,113 @@ YELLOW='\033[33m'               # git_branch
 RED='\033[31m'                   # git_status
 GREEN='\033[32m'                 # git_metrics added
 GRAY='\033[38;2;160;169;203m'   # #a0a9cb — time/secondary text
-FADED='\033[2;38;2;110;115;135m' # dim + #6e7387 — barely-there text (session id)
+PEACH='\033[38;2;250;179;135m'  # #fab387 — raised effort (high, xhigh)
+FADED='\033[2;38;2;110;115;135m' # dim + #6e7387 — barely-there text
+GHOST='\033[2;38;2;88;91;112m'    # dim + #585b70 — background text (session id, empty gauge slots)
 ITALIC='\033[3m'
 RESET='\033[0m'
 
 SEP=" "
 
 # --- Build output ---
-OUT=""
+# Workspace (project, branch, git), then model, effort and id, all on the left. The context
+# meter alone sits on the right, padded to the terminal width Claude Code reports in COLUMNS.
+# When the width is unknown or too narrow, the meter joins the left group on one line.
 
-# Project name (always shown)
+LEFT=""
 if [ -n "$PROJECT" ]; then
-  OUT="${CYAN}${PROJECT}${RESET}"
+  LEFT="${CYAN}${PROJECT}${RESET}"
 fi
-
-# Branch or worktree name + git status + metrics
 if [ -n "$LOCATION" ]; then
-  OUT="${OUT}${SEP}${YELLOW}\uf418 ${LOCATION}${RESET}"
+  LEFT="${LEFT}${SEP}${YELLOW} ${LOCATION}${RESET}"
   if [ -n "$GIT_STATUS" ]; then
-    OUT="${OUT} ${RED}${GIT_STATUS}${RESET}"
+    LEFT="${LEFT} ${RED}${GIT_STATUS}${RESET}"
   fi
   if [ -n "$METRICS_ADDED" ]; then
-    OUT="${OUT} ${GREEN}+${METRICS_ADDED}${RESET}"
+    LEFT="${LEFT} ${GREEN}+${METRICS_ADDED}${RESET}"
   fi
   if [ -n "$METRICS_REMOVED" ]; then
-    OUT="${OUT} ${RED}-${METRICS_REMOVED}${RESET}"
+    LEFT="${LEFT} ${RED}-${METRICS_REMOVED}${RESET}"
   fi
 fi
 
-# Context % — only when >= 60%
+RIGHT=""
+if [ -n "$MODEL_DISPLAY" ]; then
+  RIGHT="${GRAY}${MODEL_DISPLAY}${RESET}"
+fi
+
+# Effort: five dots, filled count by level; faded, gray, peach, red.
+if [ -n "$EFFORT" ]; then
+  case "$EFFORT" in
+    low)    EFFORT_FILL=1; EFFORT_COLOR="$FADED" ;;
+    medium) EFFORT_FILL=2; EFFORT_COLOR="$GRAY" ;;
+    high)   EFFORT_FILL=3; EFFORT_COLOR="$PEACH" ;;
+    xhigh)  EFFORT_FILL=4; EFFORT_COLOR="$PEACH" ;;
+    max)    EFFORT_FILL=5; EFFORT_COLOR="$RED" ;;
+    *)      EFFORT_FILL=0; EFFORT_COLOR="$GRAY" ;;
+  esac
+  EFFORT_GAUGE=""
+  for ((i = 0; i < 5; i++)); do
+    if [ "$i" -lt "$EFFORT_FILL" ]; then EFFORT_GAUGE+="●"; else EFFORT_GAUGE+="○"; fi
+  done
+  FILLED="${EFFORT_GAUGE:0:$EFFORT_FILL}"
+  EMPTY="${EFFORT_GAUGE:$EFFORT_FILL}"
+  [ -n "$RIGHT" ] && RIGHT="${RIGHT} " || true
+  RIGHT="${RIGHT}${EFFORT_COLOR}${FILLED}${RESET}${GHOST}${EMPTY}${RESET}"
+fi
+
+# Context: hidden below 40% so its appearance is itself the warning that the 50% safe
+# zone is near. Ten blocks plus percentage; faded from 40%, peach from 50%, red from 80%.
 CTX_INT=${CTX_USED%.*}
 CTX_INT=${CTX_INT:-0}
-if [ "$CTX_INT" -ge 60 ] 2>/dev/null; then
+CTX_INFO=""
+if [ "$CTX_INT" -ge 40 ] 2>/dev/null; then
   if [ "$CTX_INT" -ge 80 ]; then
     CTX_COLOR="$RED"
+  elif [ "$CTX_INT" -ge 50 ]; then
+    CTX_COLOR="$PEACH"
   else
-    CTX_COLOR="$GRAY"
+    CTX_COLOR="$FADED"
   fi
-  [ -n "$OUT" ] && OUT="${OUT}${SEP}${FADED}·${RESET}${SEP}" || true
-  OUT="${OUT}${CTX_COLOR}ctx ${CTX_INT}%${RESET}"
+  CTX_FILL=$(( (CTX_INT + 5) / 10 ))
+  [ "$CTX_FILL" -gt 10 ] && CTX_FILL=10 || true
+  CTX_BAR=""
+  for ((i = 0; i < 10; i++)); do
+    if [ "$i" -lt "$CTX_FILL" ]; then CTX_BAR+="▰"; else CTX_BAR+="▱"; fi
+  done
+  CTX_INFO="${CTX_COLOR}ctx ${CTX_BAR:0:$CTX_FILL}${RESET}${GHOST}${CTX_BAR:$CTX_FILL}${RESET} ${CTX_COLOR}${CTX_INT}%${RESET}"
 fi
 
-# Model + session id, appended after the git info on the same line.
-# Separator pipe uses the same muted gray as the model text.
-MODEL_INFO=""
-if [ -n "$MODEL_DISPLAY" ]; then
-  MODEL_INFO="${GRAY}${MODEL_DISPLAY}${RESET}"
+if [ -n "$SESSION_LABEL" ]; then
+  [ -n "$RIGHT" ] && RIGHT="${RIGHT}${SEP}${FADED}·${RESET}${SEP}" || true
+  RIGHT="${RIGHT}${GHOST}${SESSION_LABEL}${RESET}"
 fi
-if [ -n "$SESSION_ID" ]; then
-  [ -n "$MODEL_INFO" ] && MODEL_INFO="${MODEL_INFO}${SEP}${FADED}·${RESET}${SEP}" || true
-  MODEL_INFO="${MODEL_INFO}${FADED}${SESSION_ID}${RESET}"
+
+if [ -n "$LEFT" ] && [ -n "$RIGHT" ]; then
+  LEFT="${LEFT}${SEP}${FADED}·${RESET}${SEP}${RIGHT}"
+else
+  LEFT="${LEFT}${RIGHT}"
 fi
-if [ -n "$MODEL_INFO" ]; then
-  [ -n "$OUT" ] && OUT="${OUT}${SEP}${FADED}·${RESET}${SEP}" || true
-  OUT="${OUT}${MODEL_INFO}"
+
+# Visible width of a styled string: expand escapes, strip SGR sequences, count characters.
+visible_width() {
+  LC_ALL=C.UTF-8 printf '%b' "$1" | sed 's/\x1b\[[0-9;]*m//g' | LC_ALL=C.UTF-8 wc -m | xargs
+}
+
+# Columns Claude Code reserves around the status line for its own chrome. A value that is
+# too small overruns the line and the meter clips to an ellipsis; too large leaves a gap
+# before the right edge.
+CHROME_MARGIN=6
+
+GAP="${SEP}${FADED}·${RESET}${SEP}"
+[ -z "$CTX_INFO" ] && GAP="" || true
+if [ -n "$LEFT" ] && [ -n "$CTX_INFO" ] && [ "${COLUMNS:-0}" -gt 0 ] 2>/dev/null; then
+  PAD=$(( COLUMNS - CHROME_MARGIN - $(visible_width "$LEFT") - $(visible_width "$CTX_INFO") ))
+  if [ "$PAD" -ge 3 ]; then
+    GAP=$(printf '%*s' "$PAD" '')
+  fi
 fi
+
+OUT="${LEFT}${GAP}${CTX_INFO}"
 
 echo -e "$OUT"
