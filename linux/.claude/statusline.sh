@@ -165,27 +165,44 @@ if [ -n "$EFFORT" ]; then
   RIGHT="${RIGHT}${EFFORT_COLOR}${FILLED}${RESET}${GHOST}${EMPTY}${RESET}"
 fi
 
-# Context: hidden below 40% so its appearance is itself the warning that the 50% safe
-# zone is near. Ten blocks plus percentage; faded from 40%, peach from 50%, red from 80%.
+# Context: always on the line, rising out of the background as the window fills. Ink opacity
+# eases in on a cube curve, 3% at 0% context, still near the background through the idle
+# quarter, a fifth at 45%, half at 60%, full at 80%; hue is gray below 50%, peach from 50% (the anecdotal safe-zone edge)
+# and red from 80%. Terminals have no alpha channel, so
+# the opacity is pre-blended into the terminal background as a truecolor value. Ten blocks
+# plus percentage; the empty blocks fade on the same curve so the meter moves as one object.
 CTX_INT=${CTX_USED%.*}
 CTX_INT=${CTX_INT:-0}
-CTX_INFO=""
-if [ "$CTX_INT" -ge 40 ] 2>/dev/null; then
-  if [ "$CTX_INT" -ge 80 ]; then
-    CTX_COLOR="$RED"
-  elif [ "$CTX_INT" -ge 50 ]; then
-    CTX_COLOR="$PEACH"
-  else
-    CTX_COLOR="$FADED"
-  fi
-  CTX_FILL=$(( (CTX_INT + 5) / 10 ))
-  [ "$CTX_FILL" -gt 10 ] && CTX_FILL=10 || true
-  CTX_BAR=""
-  for ((i = 0; i < 10; i++)); do
-    if [ "$i" -lt "$CTX_FILL" ]; then CTX_BAR+="▰"; else CTX_BAR+="▱"; fi
-  done
-  CTX_INFO="${CTX_COLOR}ctx ${CTX_BAR:0:$CTX_FILL}${RESET}${GHOST}${CTX_BAR:$CTX_FILL}${RESET} ${CTX_COLOR}${CTX_INT}%${RESET}"
+[ "$CTX_INT" -gt 100 ] 2>/dev/null && CTX_INT=100 || true
+
+# Terminal background (Catppuccin Mocha base) the meter ink is blended against.
+BG_R=30; BG_G=30; BG_B=46
+
+# blend R G B ALPHA_PERMILLE -> truecolor SGR of the color mixed into the background.
+blend() {
+  local r=$(( BG_R + ($1 - BG_R) * $4 / 1000 ))
+  local g=$(( BG_G + ($2 - BG_G) * $4 / 1000 ))
+  local b=$(( BG_B + ($3 - BG_B) * $4 / 1000 ))
+  printf '\033[38;2;%d;%d;%dm' "$r" "$g" "$b"
+}
+
+CTX_ALPHA=$(( 30 + 970 * CTX_INT * CTX_INT * CTX_INT / 512000 ))
+[ "$CTX_ALPHA" -gt 1000 ] && CTX_ALPHA=1000 || true
+if [ "$CTX_INT" -ge 80 ]; then
+  CTX_COLOR=$(blend 243 139 168 "$CTX_ALPHA")   # red #f38ba8
+elif [ "$CTX_INT" -ge 50 ]; then
+  CTX_COLOR=$(blend 250 179 135 "$CTX_ALPHA")   # peach #fab387
+else
+  CTX_COLOR=$(blend 160 169 203 "$CTX_ALPHA")   # gray #a0a9cb
 fi
+CTX_EMPTY=$(blend 88 91 112 "$CTX_ALPHA")       # ghost #585b70
+CTX_FILL=$(( (CTX_INT + 5) / 10 ))
+[ "$CTX_FILL" -gt 10 ] && CTX_FILL=10 || true
+CTX_BAR=""
+for ((i = 0; i < 10; i++)); do
+  if [ "$i" -lt "$CTX_FILL" ]; then CTX_BAR+="▰"; else CTX_BAR+="▱"; fi
+done
+CTX_INFO="${CTX_COLOR}ctx ${CTX_BAR:0:$CTX_FILL}${RESET}${CTX_EMPTY}${CTX_BAR:$CTX_FILL}${RESET} ${CTX_COLOR}${CTX_INT}%${RESET}"
 
 if [ -n "$SESSION_LABEL" ]; then
   [ -n "$RIGHT" ] && RIGHT="${RIGHT}${SEP}${FADED}·${RESET}${SEP}" || true
