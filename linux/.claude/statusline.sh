@@ -166,11 +166,13 @@ if [ -n "$EFFORT" ]; then
 fi
 
 # Context: always on the line, rising out of the background as the window fills. Ink opacity
-# eases in on a cube curve, 3% at 0% context, still near the background through the idle
-# quarter, a fifth at 45%, half at 60%, full at 80%; hue is gray below 50%, peach from 50% (the anecdotal safe-zone edge)
-# and red from 80%. Terminals have no alpha channel, so
-# the opacity is pre-blended into the terminal background as a truecolor value. Ten blocks
-# plus percentage; the empty blocks fade on the same curve so the meter moves as one object.
+# ramps continuously through the levels of the four-tier sketch: 18% at 0% context, 40% at 25,
+# 65% at 40, full ink at 45; a straight line between each pair so every percent moves the meter a
+# little. Hue is gray below 45, peach from 45 (the anecdotal safe-zone edge) and a hard saturated
+# red from 85, the Frappé flavour of the palette red: redder than the pink Mocha one, without the crimson depth of Latte, so the last tier reads as a warning
+# rather than a shade. Terminals have no alpha channel, so the opacity is pre-blended into the
+# terminal background as a truecolor value. Ten blocks plus percentage; the empty blocks fade on
+# the same ramp so the meter moves as one object.
 CTX_INT=${CTX_USED%.*}
 CTX_INT=${CTX_INT:-0}
 [ "$CTX_INT" -gt 100 ] 2>/dev/null && CTX_INT=100 || true
@@ -186,11 +188,16 @@ blend() {
   printf '\033[38;2;%d;%d;%dm' "$r" "$g" "$b"
 }
 
-CTX_ALPHA=$(( 30 + 970 * CTX_INT * CTX_INT * CTX_INT / 512000 ))
-[ "$CTX_ALPHA" -gt 1000 ] && CTX_ALPHA=1000 || true
-if [ "$CTX_INT" -ge 80 ]; then
-  CTX_COLOR=$(blend 243 139 168 "$CTX_ALPHA")   # red #f38ba8
-elif [ "$CTX_INT" -ge 50 ]; then
+# ramp FROM_PCT TO_PCT FROM_ALPHA TO_ALPHA -> permille alpha at CTX_INT, linear between the anchors.
+ramp() { echo $(( $3 + ($4 - $3) * (CTX_INT - $1) / ($2 - $1) )); }
+if [ "$CTX_INT" -ge 45 ]; then CTX_ALPHA=1000
+elif [ "$CTX_INT" -ge 40 ]; then CTX_ALPHA=$(ramp 40 45 650 1000)
+elif [ "$CTX_INT" -ge 25 ]; then CTX_ALPHA=$(ramp 25 40 400 650)
+else CTX_ALPHA=$(ramp 0 25 180 400)
+fi
+if [ "$CTX_INT" -ge 85 ]; then
+  CTX_COLOR=$(blend 231 130 132 "$CTX_ALPHA")   # Catppuccin Frappé red #e78284, the warning tier
+elif [ "$CTX_INT" -ge 45 ]; then
   CTX_COLOR=$(blend 250 179 135 "$CTX_ALPHA")   # peach #fab387
 else
   CTX_COLOR=$(blend 160 169 203 "$CTX_ALPHA")   # gray #a0a9cb
