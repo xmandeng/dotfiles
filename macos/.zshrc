@@ -101,3 +101,4 @@ esac
 
 # Local overrides (not tracked in dotfiles)
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
+export NODE_OPTIONS="--dns-result-order=ipv4first"

@@ -1,5 +1,5 @@
 [general]
-import = ["~/.config/alacritty/catppuccin-mocha-vivid.toml"]
+import = ["~/.config/alacritty/vscode-2026-dark.toml"]
 
 [env]
 TERM = "tmux-256color"
@@ -34,6 +34,11 @@ key = "Right"
 mods = "Super"
 chars = "\u0005"  # Ctrl+E for end of line
 
+[[keyboard.bindings]]
+key = "V"
+mods = "Command|Shift"
+command = { program = "/Users/xaviermandeng/.local/bin/clip2remote" }
+
 [window]
 padding.x = 10
 padding.y = 30
@@ -48,3 +53,4 @@ size = 14.0
 bindings = [
     { mouse = "Right", action = "Paste" }
 ]
+

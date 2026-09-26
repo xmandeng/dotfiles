@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+exec 2>>/tmp/clip2remote.log
+
+HOST=baylan
+
+f="clip-$(date +%s).png"
+
+/opt/homebrew/bin/pngpaste "/tmp/$f"
+/usr/bin/scp -q "/tmp/$f" "$HOST:/tmp/$f"
+/usr/bin/ssh "$HOST" "tmux set-buffer -b clip2remote '/tmp/$f' && tmux paste-buffer -p -d -b clip2remote"
