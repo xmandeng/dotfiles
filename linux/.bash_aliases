@@ -22,6 +22,7 @@ alias g1='git log --oneline'
 alias gco="git branch -r | sed 's/^ *origin\///' | fzf --cycle --no-info --border=rounded --reverse | xargs git checkout"
 alias gcd='git checkout develop'
 alias gl='git log --oneline --graph --all --decorate --parents'
+alias gl1='git log --oneline'
 alias gstat='git diff --stat'
 alias uncommit='git reset --soft HEAD~1'
 alias forget='git reset --hard HEAD~1'
