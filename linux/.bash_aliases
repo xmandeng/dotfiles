@@ -17,7 +17,7 @@ alias egrep='/bin/egrep --color=auto'
 alias ga='git add . -A'
 alias gs='git status'
 alias gc='git commit -m'
-alias gp='git log -p'
+alias glp='git log -p'
 alias g1='git log --oneline'
 alias gco="git branch -r | sed 's/^ *origin\///' | fzf --cycle --no-info --border=rounded --reverse | xargs git checkout"
 alias gcd='git checkout develop'
@@ -27,6 +27,10 @@ alias gstat='git diff --stat'
 alias uncommit='git reset --soft HEAD~1'
 alias forget='git reset --hard HEAD~1'
 alias cleanup="git branch -vv | grep 'origin/.*: gone]' | awk '{print \$1}' | xargs git branch -D"
+# Pull and replay local commits on top of the remote, stashing uncommitted work around it.
+# To make this the default for plain `git pull`, run once:
+#   git config --global pull.rebase true && git config --global rebase.autoStash true
+alias gp='git pull --rebase --autostash'
 
 # ── Tmux ─────────────────────────────────────────────────────────────────────
 alias t='tmux'
@@ -79,3 +83,4 @@ alias ts='tmux_select_session'
 
 # ── Machine-local overrides ─────────────────────────────────────────────────
 [ -f ~/.bash_aliases.local ] && . ~/.bash_aliases.local
+alias ollama='docker exec -it ollama ollama'

@@ -66,3 +66,21 @@ eval "$(zoxide init bash --cmd cd)"
 
 # Local overrides (not tracked in dotfiles)
 [ -f ~/.bashrc.local ] && source ~/.bashrc.local
+
+export ENABLE_CLAUDEAI_MCP_SERVERS=false
+
+eval "$(keychain --eval --quiet id_ed25519_github)"
+
+export DO_NOT_TRACK=1
+export TERMINAL_BROWSER_NO_TELEMETRY=1
+
+# terminal-browser Claude Code plugin needs a display; baylan has none, so
+# point only claude at the Xvfb service (~/.config/systemd/user/xvfb.service)
+claude() {
+    if [ -z "$DISPLAY" ] && [ -S /tmp/.X11-unix/X99 ]; then
+        DISPLAY=:99 command claude "$@"
+    else
+        command claude "$@"
+    fi
+}
+
