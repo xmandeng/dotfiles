@@ -227,6 +227,26 @@ visible_width() {
   LC_ALL=C.UTF-8 printf '%b' "$1" | sed 's/\x1b\[[0-9;]*m//g' | LC_ALL=C.UTF-8 wc -m | xargs
 }
 
+# Remote Control: the status line input carries no Remote Control state, but Claude Code
+# writes `bridgeSessionId` into its per-process registry file (~/.claude/sessions/<pid>.json)
+# while Remote Control is linked and nulls it on unlink. Only a live process's file counts, so
+# a file left behind by a crashed session never shows the flag. The flag updates at the next
+# status line redraw; Claude Code does not redraw on a Remote Control change.
+RC_LINKED=""
+if [ -n "$SESSION_ID" ]; then
+  for f in $(grep -l "\"sessionId\":\"${SESSION_ID}\"" "$HOME"/.claude/sessions/*.json 2>/dev/null); do
+    RC_PID=$(jq -r '.pid // empty' "$f" 2>/dev/null || true)
+    if [ -n "$RC_PID" ] && kill -0 "$RC_PID" 2>/dev/null &&
+       [ -n "$(jq -r '.bridgeSessionId // empty' "$f" 2>/dev/null || true)" ]; then
+      RC_LINKED=1
+      break
+    fi
+  done
+fi
+if [ -n "$RC_LINKED" ]; then
+  CTX_INFO="${GRAY}rc${RESET}${SEP}${FADED}·${RESET}${SEP}${CTX_INFO}"
+fi
+
 # Columns Claude Code reserves around the status line for its own chrome. A value that is
 # too small overruns the line and the meter clips to an ellipsis; too large leaves a gap
 # before the right edge.
